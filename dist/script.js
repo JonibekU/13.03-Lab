@@ -1,56 +1,76 @@
-// This is a simple JavaScript file that adds interactivity to the HTML page
-// It defines a function to show an alert when a link is clicked
-function sayHello() {
-    alert("Hello, world from javascript!");
-}
-// This function will be called when the link is clicked
-// It shows an alert with a message
-// Ensure the DOM is fully loaded before attaching the event listener
-document.addEventListener("DOMContentLoaded", function() {
-    const link = document.getElementById("hello-link");
-    if (!link) {
-        console.error("Link with ID 'hello-link' not found.");
-        return;
-    }
-    link.addEventListener("click", function(event) {
-        event.preventDefault(); // Prevent the default link behavior
-        sayHello();
-    });
+// Size of a single snowflake
+const flakeSize = 8;
+
+window.addEventListener("DOMContentLoaded", function() {
+   let canvas = document.querySelector("canvas");
+
+   drawGround(canvas);
+   drawSnowText(canvas);
+   drawSnowman(canvas);
+   drawSnowflakes(canvas);
 });
 
-async function getRandomJoke() {
-    return fetch('https://icanhazdadjoke.com/', {
-        headers: {
-            'Accept': 'text/plain'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.text();
-    })
-    .catch(error => {
-        console.error('There was a problem fetching the joke:', error);
-        return "Failed to fetch a joke. Please try again later.";
-    });
+function drawGround(canvas) {
+   let context = canvas.getContext("2d");
+
+   // Background
+   context.fillStyle = "#bbb";
+   context.fillRect(0, 0, canvas.width, canvas.height);
+
+   // Ground
+   context.fillStyle = "brown";
+   context.fillRect(0, canvas.height - 80, canvas.width, canvas.height);
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    const jokeButton = document.getElementById("joke-button");
-    if (!jokeButton) {
-        console.error("Button with ID 'joke-button' not found.");
-        return;
-    }
-    jokeButton.addEventListener("click", async function() {
+function drawSnowflakes(canvas) {
+   for (let c = 0; c < 100; c++) {
+      let x = Math.floor(Math.random() * canvas.width);
+      let y = Math.floor(Math.random() * canvas.height);
+      drawSingleFlake(canvas, x, y);
+   }
+}
 
-            const jokeDisplay = document.getElementById("joke-display");
-            if (!jokeDisplay) {
-                console.error("Element with ID 'joke-display' not found.");
-                return;
-            }
-            jokeDisplay.textContent = "Loading joke...";
-            const joke = await getRandomJoke();
-            jokeDisplay.textContent = joke;
-    });
-});
+function drawSnowText(canvas) {
+   let context = canvas.getContext("2d");
+
+   context.font = "80px Verdana";
+   context.textAlign = "center";
+   context.textBaseline = "top";
+   context.fillStyle = "blue";
+   context.fillText("SNOW", canvas.width / 2, 10);
+}
+
+function drawSnowman(canvas) {
+   let context = canvas.getContext("2d");
+
+   context.fillStyle = "white";
+
+   // Bottom circle
+   context.beginPath();
+   context.arc(150, 200, 50, 0, Math.PI * 2);
+   context.fill();
+
+   // Middle circle
+   context.beginPath();
+   context.arc(150, 120, 40, 0, Math.PI * 2);
+   context.fill();
+
+   // Top circle
+   context.beginPath();
+   context.arc(150, 60, 25, 0, Math.PI * 2);
+   context.fill();
+}
+
+function drawSingleFlake(canvas, x, y) {
+   let context = canvas.getContext("2d");
+
+   context.beginPath();
+   context.moveTo(x, y);
+   context.lineTo(x + flakeSize / 2, y + flakeSize / 2);
+   context.lineTo(x, y + flakeSize);
+   context.lineTo(x - flakeSize / 2, y + flakeSize / 2);
+   context.closePath();
+
+   context.fillStyle = "#eee";
+   context.fill();
+}
